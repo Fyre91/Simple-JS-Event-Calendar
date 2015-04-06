@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+    <title>Calendar</title>
+    <link href='css/main.css' rel="stylesheet"/>
+</head>
+
+<body>
+
+    <!-- Main calendar header to show control panel month view -->
+    <div class="calendar-header">
+        <div id="prevMonth" class="button">Previous Month</div>
+        <div id="nextMonth" class="button">Next Month</div>
+        <select id="months">
+        </select>
+        <select id="years">
+        </select>
+    </div>
+
+    <!-- Main calendar header to show control panel for Day view -->
+    <div id="calendar-header-dayView">
+        <div id="prevDay" class="button">Previous Day</div>
+        <div id="nextDay" class="button">Next Day</div>
+        <div id="monthView" class="button">Month View</div>
+        <h4>Date:</h4> <select id="days">
+        </select>
+    </div>
+
+    <!-- Calendar area -->
+    <div class="grid-view">
+        <table class="calendar-days">
+            <tr id="dayNames">        
+            </tr>
+        </table>
+        <div id="calendar-grid">
+             
+        </div>
+    </div>
+</body>
+
+<!-- Template for showing number of days in for specific month -->
+<script id="daysInMonth" type="text/template">
+    <% for(var i = 1; i <= numDays; i += 1) { %>
+        <option value=<%= i %>><%=  i %></option>
+    <% } %>
+</script>
+
+<!-- Template for showing the day view-->
+<script id="dayView-temp" type="text/template">
+    <table>
+        <thead>
+            <tr>
+                <th class="timeHeading">Time</th>
+                <th>Event Name</th>
+            </tr>
+        </thead>
+    <% for(var i = 0; i < 24; i += 1) {%>
+        <tr>
+            <td class="timeHeading"><%= i %> - <%= (i + 1)%24 %></td>
+            <td>
+                <ul>
+                <% for(var k = 0, _len = eventTime[i].length; k < _len; k += 1) { %>
+                    <li><%= eventTime[i][k] %></li>
+                <% } %>
+                </ul>
+            </td> 
+        </tr>
+    <% } %>
+    </table>
+</script>
+
+<!-- Template view for showing number of years -->
+<script id="year-temp" type="text/template">
+    <% for(var i = 1990 ; i < 2030; i += 1) { %>
+        <option value=<%= i %>><%=  i %></option>
+    <% } %>
+</script>
+
+<!-- Template view for showing different months -->
+<script id="month-temp" type="text/template">
+    <% for(month in months) { %>
+        <option value=<%= month %>><%=  months[month] %></option>
+    <% } %>
+</script>
+
+<!-- Template view for showing all the days of week -->
+<script id="day-temp" type="text/template">
+    <% for(day in days) { %>
+        <td><%= days[day] %></td>
+    <% } %>
+</script>
+
+<!-- Template view for displaying the calendar month view-->
+<script id="date-temp" type="text/template">
+    <div class="week-row">
+        <table>
+            <thead><tr>
+                <td><%= dates[0]["digit"] %></td>
+                <td><%= dates[1]["digit"] %></td>
+                <td><%= dates[2]["digit"] %></td>
+                <td><%= dates[3]["digit"] %></td>
+                <td><%= dates[4]["digit"] %></td>
+                <td><%= dates[5]["digit"] %></td>
+                <td><%= dates[6]["digit"] %></td>
+            </tr></thead>
+            <tbody>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[0]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[0]["events"][i]["startTime"] %> - 
+                                <%= dates[0]["events"][i]["endTime"] %> :
+                                <%= dates[0]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[1]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[1]["events"][i]["startTime"] %> - 
+                                <%= dates[1]["events"][i]["endTime"] %> :
+                                <%= dates[1]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[2]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[2]["events"][i]["startTime"] %> - 
+                                <%= dates[2]["events"][i]["endTime"] %> :
+                                <%= dates[2]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[3]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[3]["events"][i]["startTime"] %> - 
+                                <%= dates[3]["events"][i]["endTime"] %> :
+                                <%= dates[3]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[4]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[4]["events"][i]["startTime"] %> - 
+                                <%= dates[4]["events"][i]["endTime"] %> :
+                                <%= dates[4]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[5]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[5]["events"][i]["startTime"] %> - 
+                                <%= dates[5]["events"][i]["endTime"] %> :
+                                <%= dates[5]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[6]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[6]["events"][i]["startTime"] %> - 
+                                <%= dates[6]["events"][i]["endTime"] %> :
+                                <%= dates[6]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="week-row">
+        <table>
+            <thead><tr>
+                <td><%= dates[7]["digit"] %></td>
+                <td><%= dates[8]["digit"] %></td>
+                <td><%= dates[9]["digit"] %></td>
+                <td><%= dates[10]["digit"] %></td>
+                <td><%= dates[11]["digit"] %></td>
+                <td><%= dates[12]["digit"] %></td>
+                <td><%= dates[13]["digit"] %></td>
+            </tr></thead>
+            <tbody>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[7]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[7]["events"][i]["startTime"] %> - 
+                                <%= dates[7]["events"][i]["endTime"] %> :
+                                <%= dates[7]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[8]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[8]["events"][i]["startTime"] %> - 
+                                <%= dates[8]["events"][i]["endTime"] %> :
+                                <%= dates[8]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[9]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[9]["events"][i]["startTime"] %> - 
+                                <%= dates[9]["events"][i]["endTime"] %> :
+                                <%= dates[9]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[10]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[10]["events"][i]["startTime"] %> - 
+                                <%= dates[10]["events"][i]["endTime"] %> :
+                                <%= dates[10]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[11]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[11]["events"][i]["startTime"] %> - 
+                                <%= dates[11]["events"][i]["endTime"] %> :
+                                <%= dates[11]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[12]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[12]["events"][i]["startTime"] %> - 
+                                <%= dates[12]["events"][i]["endTime"] %> :
+                                <%= dates[12]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[13]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[13]["events"][i]["startTime"] %> - 
+                                <%= dates[13]["events"][i]["endTime"] %> :
+                                <%= dates[13]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="week-row">
+        <table>
+            <thead><tr>
+                <td><%= dates[14]["digit"] %></td>
+                <td><%= dates[15]["digit"] %></td>
+                <td><%= dates[16]["digit"] %></td>
+                <td><%= dates[17]["digit"] %></td>
+                <td><%= dates[18]["digit"] %></td>
+                <td><%= dates[19]["digit"] %></td>
+                <td><%= dates[20]["digit"] %></td>
+            </tr></thead>
+            <tbody>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[14]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[14]["events"][i]["startTime"] %> - 
+                                <%= dates[14]["events"][i]["endTime"] %> :
+                                <%= dates[14]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[15]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[15]["events"][i]["startTime"] %> - 
+                                <%= dates[15]["events"][i]["endTime"] %> :
+                                <%= dates[15]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[16]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[16]["events"][i]["startTime"] %> - 
+                                <%= dates[16]["events"][i]["endTime"] %> :
+                                <%= dates[16]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[17]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[17]["events"][i]["startTime"] %> - 
+                                <%= dates[17]["events"][i]["endTime"] %> :
+                                <%= dates[17]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[18]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[18]["events"][i]["startTime"] %> - 
+                                <%= dates[18]["events"][i]["endTime"] %> :
+                                <%= dates[18]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[19]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[19]["events"][i]["startTime"] %> - 
+                                <%= dates[19]["events"][i]["endTime"] %> :
+                                <%= dates[19]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[20]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[20]["events"][i]["startTime"] %> - 
+                                <%= dates[20]["events"][i]["endTime"] %> :
+                                <%= dates[20]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="week-row">
+        <table>
+            <thead><tr>
+                <td><%= dates[21]["digit"] %></td>
+                <td><%= dates[22]["digit"] %></td>
+                <td><%= dates[23]["digit"] %></td>
+                <td><%= dates[24]["digit"] %></td>
+                <td><%= dates[25]["digit"] %></td>
+                <td><%= dates[26]["digit"] %></td>
+                <td><%= dates[27]["digit"] %></td>
+            </tr></thead>
+            <tbody>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[21]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[21]["events"][i]["startTime"] %> - 
+                                <%= dates[21]["events"][i]["endTime"] %> :
+                                <%= dates[21]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[22]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[22]["events"][i]["startTime"] %> - 
+                                <%= dates[22]["events"][i]["endTime"] %> :
+                                <%= dates[22]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[23]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[23]["events"][i]["startTime"] %> - 
+                                <%= dates[23]["events"][i]["endTime"] %> :
+                                <%= dates[23]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[24]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[24]["events"][i]["startTime"] %> - 
+                                <%= dates[24]["events"][i]["endTime"] %> :
+                                <%= dates[24]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[25]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[25]["events"][i]["startTime"] %> - 
+                                <%= dates[25]["events"][i]["endTime"] %> :
+                                <%= dates[25]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[26]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[26]["events"][i]["startTime"] %> - 
+                                <%= dates[26]["events"][i]["endTime"] %> :
+                                <%= dates[26]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[27]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[27]["events"][i]["startTime"] %> - 
+                                <%= dates[27]["events"][i]["endTime"] %> :
+                                <%= dates[27]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="week-row">
+        <table>
+            <thead><tr>
+                <td><%= dates[28]["digit"] %></td>
+                <td><%= dates[29]["digit"] %></td>
+                <td><%= dates[30]["digit"] %></td>
+                <td><%= dates[31]["digit"] %></td>
+                <td><%= dates[32]["digit"] %></td>
+                <td><%= dates[33]["digit"] %></td>
+                <td><%= dates[34]["digit"] %></td>
+            </tr></thead>
+            <tbody>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[28]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[28]["events"][i]["startTime"] %> - 
+                                <%= dates[28]["events"][i]["endTime"] %> :
+                                <%= dates[28]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[29]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[29]["events"][i]["startTime"] %> - 
+                                <%= dates[29]["events"][i]["endTime"] %> :
+                                <%= dates[29]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[30]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[30]["events"][i]["startTime"] %> - 
+                                <%= dates[30]["events"][i]["endTime"] %> :
+                                <%= dates[30]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[31]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[31]["events"][i]["startTime"] %> - 
+                                <%= dates[31]["events"][i]["endTime"] %> :
+                                <%= dates[31]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[32]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[32]["events"][i]["startTime"] %> - 
+                                <%= dates[32]["events"][i]["endTime"] %> :
+                                <%= dates[32]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[33]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[33]["events"][i]["startTime"] %> - 
+                                <%= dates[33]["events"][i]["endTime"] %> :
+                                <%= dates[33]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <% for (var i = 0, _len = dates[34]["events"].length; i < _len; i += 1) {%>
+                            <li>
+                                <%= dates[34]["events"][i]["startTime"] %> - 
+                                <%= dates[34]["events"][i]["endTime"] %> :
+                                <%= dates[34]["events"][i].name %>
+                            </li>
+                        <% }%>
+                    </ul>
+                </td>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+
+<script src="js/jquery.min.js"></script>
+<script src="js/underscore-min.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+</script>
+</html>

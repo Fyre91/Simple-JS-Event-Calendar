@@ -1,0 +1,80 @@
+table {
+	width: 100%;
+	table-layout: fixed;
+}
+
+tr {
+	width: 100%;
+	min-height: 180px;
+}
+
+td {
+	min-height: 180px;
+	vertical-align: bottom;
+}
+.calendar-days td {
+	border:1px solid #0A093B;
+}
+#calendar-grid table{
+	min-height: 90px;
+	border: 1px solid #0A093B;
+}
+
+#calendar-grid table td {
+	border-right: 1px solid #0A093B;
+}
+
+li {
+	list-style: none;
+}
+
+#calendar-header-dayView, #days-view {
+	display: none;
+}
+.button:hover {
+	background-color: gray;
+}
+.button {
+	cursor: pointer;
+	width:200px;
+	height: 30px;
+	border-radius: 5px;
+	border:1px solid #0A093B;
+	display: inline-block;
+	padding-top:10px;
+	text-align: center;
+	border-spacing: 20px;
+}
+thead td, .timeHeading {
+	background-color: #007E7E;
+	font-size: 20px;
+}
+
+.timeHeading {
+	width:200px;
+	text-align: center;
+}
+
+select {
+	width: 200px;
+	height: 50px;
+}
+.week-row tbody td{
+	background-color: #817FB2;
+
+}
+#dayNames {
+	background-color: #B17272;
+	height: 40px;
+	vertical-align: middle;
+	text-align: center;
+	border-radius:3px; 
+}
+
+.grid-view {
+	margin-top: 30px;
+}
+
+h4 {
+	display: inline-block;
+}
